@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ступенчатый калибр</title>
+    <style type="text/css">
+   TABLE {
+    background: #B0E0E6; /* Цвет фона таблицы */
+    border: 5px double #0000FF; /* Рамка вокруг таблицы */
+   }
+    body {
+     font-family: Times New Roman, sans-serif; /* Рубленый шрифт */
+    }
+    .head {
+     font-size: 125%; /* Размер шрифта в процентах */
+     font-family: Times New Roman; /* Шрифт с засечками */
+     position: relative; /* Относительное позиционирование */
+     top: 5px; /* Сдвиг сверху */
+    }
+    .block1 {
+    background: #FA8072;
+    }
+    .block2 {
+    background: #008000;
+    }
+    .block3 {
+    background: #9400D3;
+    }
+    .block4 {
+    background: #FA8072;
+    }
+  </style>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- production version, optimized for size and speed -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+</head>
+
+<body>
+<div class="container" id="app">
+    <div class="row">
+        <div class="col">
+            <h1>Ступенчатый калибр</h1>
+            <p>Калибр — средство контроля, контактирующее с элементом изделия по поверхности, линиям или точкам. Калибр имеет геометрические параметры, воспроизводящие элементы изделия с заданными предельными размерами. Размеры калибров могут задаваться без всякой связи с единицей измерения. Существуют трёхмерные калибры со сложной геометрической конфигурацией.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-lg-6">
+            <form>
+                <label for="s_input" class="form-label head">Количество секторов:</label>
+                <input id="s_input" type="text" class="form-control" v-bind:class="{'is-invalid': s_error}" aria-describedby="s_error" v-model="s_input" required>
+                <div id="s_error" class="invalid-feedback">{{ s_error }}</div>
+            </form>
+
+            <form class="row g-3">
+                <span class="head">Введите диаметр:</span><Br>
+                <div class="container">
+                    <div v-for="(diam_input, diam_index) in diam_inputs" class="row">
+                        <div class="col-md-5">
+                            <input v-bind:id="`diam_input.${diam_index}`" ref="diam_input" type="text" class="form-control" v-bind:class="{'is-invalid': diam_errors[diam_index]}" v-bind:aria-describedby="`diam_error.${diam_index}`" v-model="diam_inputs[diam_index]">
+                            <div v-bind:id="`diam_error.${diam_index}`" class="invalid-feedback">{{ diam_errors[diam_index] }}</div>
+                        </div>
+                        <div class="col-md-5">
+                            <i v-if="diam_index < diam_inputs.length - 1" v-on:click="del_input(diam_index)" class="fas fa-lg fa-times-circle btn-outline-danger"></i><Br>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <span  class="head">Выберите порядок диаметров:</span><Br>
+            <button v-on:click="order('reversed')"  class="btn btn-outline-primary">По уменьшению</button><Br>
+            <button v-on:click="order"  class="btn btn-outline-primary">По возрастанию</button><Br>
+            <button v-on:click="order('pyramid')"  class="btn btn-outline-primary">Пирамидкой</button><Br>
+            <button v-on:click="order('random')"  class="btn btn-outline-primary">Случайным образом</button>
+        </div>
+
+
+        <div class="col col-lg-6">
+            <h2>Результат</h2>
+            <table class="table table-hover table-bordered table-striped">
+                <tr>
+                    <th>Диаметр</th>
+                    <th>Градусная мера</th>
+                    <th>Длина дуги</th>
+                </tr>
+                <tr v-for="row in result">
+                    <td>{{row.diameter}}</td>
+                    <td>{{Math.round(row.angle*10)/10}}</td>
+                    <td>{{Math.round(row.arc*100)/100}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col col-lg-3"></div>
+        <div class="col col-lg-6">
+            <svg width="100%" height="100%" v-bind:viewBox2="view_box" viewBox="0 0 1000 1000">
+                <circle v-bind:cx="Math.round(width/2)" v-bind:cy="Math.round(height/2)" v-bind:r="Math.round(size/2)" fill="#B0C4DE"></circle>
+                <path v-bind:d="path" stroke="red" fill="#Ffffff" stroke-width="1"/>
+            </svg>
+        </div>
+        <div class="col col-lg-3"></div>
+    </div>
+</div>
+<script type="text/javascript">
+  function radians(degree) {
+     return degree * Math.PI / 180;
+  }
+
+  function to_float(str) {
+    str = str.trim();
+    if (!str) {
+        return NaN;
+    }
+    str = str.replace(/^0+/, "") || "0";
+    return parseFloat(str);
+  }
+
+   function shuffleArray(array) {
+       for (let i = array.length - 1; i > 0; i--) {
+           const j = Math.floor(Math.random() * (i + 1));
+           [array[i], array[j]] = [array[j], array[i]];
+       }
+   }
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      size: 1000,
+      s_input: "3",
+      s_error: "",
+      diam_inputs: [""],
+      diam_errors: [""],
+    },
+    computed: {
+        s: function() {
+            let s = to_float(this.s_input);
+            console.log(`s_input ${this.s_input}`);
+            console.log(`s ${s}`);
+            if (isFinite(s) && !(s % 1) && s > 0 && s < 100) {
+                this.s_error = "";
+                return Math.floor(s);
+            }
+            this.s_error = "Введите натуральное число, которое меньше 100";
+            return 1;
+        },
+        diameters: {
+            get: function() {
+                let d_list = [];
+                let last_input;
+                for (let i = 0; i < this.diam_inputs.length; ++i) {
+                    last_input = this.diam_inputs[i];
+                    console.log(`last_input set ${last_input}`);
+
+                    let diam = to_float(this.diam_inputs[i]);
+                    console.log(`diam_input ${this.diam_inputs[i]} -> ${diam}`);
+                    if (isFinite(diam) && diam > 0) {
+                        this.diam_errors[i] = "";
+                        d_list.push(diam);
+                    } else if (this.diam_inputs[i] || i != this.diam_inputs.length - 1) {
+                        this.diam_errors[i] = "Введите положительное число";
+                    };
+                };
+                if (last_input !== '') {
+                    console.log(`last_input check ${last_input}`);
+                    this.diam_inputs.push('');
+                    this.diam_errors.push('');
+                };
+                if (d_list.length)
+                    return d_list;
+                return [100];
+            },
+            set: function(new_diameters) {
+                let new_inputs = [];
+                let new_errors = [];
+                for (let diameter of new_diameters) {
+                    new_inputs.push(diameter.toString());
+                    new_errors.push("");
+                };
+                this.diam_inputs = new_inputs;
+                this.diam_errors = new_errors;
+            },
+        },
+        scale: function() { return 0.9 * this.size / this.diameter_max / 2; },
+        width: function() { return this.size; },
+        height: function() { return this.size; },
+        view_box: function() { return `0 0 ${this.width} ${this.height}`; },
+        result: function() {
+            let k_sum = 0;
+            let k_list = [];
+            for (let diameter of this.diameters) {
+               k_sum += this.diameters[0] / diameter;
+               console.log(`k_sum0 ${k_sum}`)
+              }
+            let angle_mult = 360 / this.s / k_sum
+            console.log(`angle_mult0 ${angle_mult}`)
+            for (let diameter of this.diameters) {
+               x = this.diameters[0] / diameter;
+               k = angle_mult*x;
+               k_list.push(k);
+               console.log(`k0 ${k}`)
+            }
+
+            let result = [];
+            for (let i = 0; i < k_list.length; ++i) {
+                result.push({diameter: this.diameters[i], angle: k_list[i], arc: ((3.14*this.diameters[i])/360)*k_list[i]});
+            }
+            return result;
+        },
+        // геттер вычисляемого значения
+        hello_world: function() {
+            // `this` указывает на экземпляр vm
+            // return this.message.split('').reverse().join('')
+            return 'Hello World'
+        },
+        diameter_max: function() {
+            let dmax = 0;
+            for (let row of this.result) {
+                if (row.diameter > dmax) {
+                    dmax = row.diameter;
+                }
+            }
+            console.log(`dmax ${dmax}`);
+            return dmax;
+        },
+        diameter_min: function() {
+            let dmin = this.result[0].diameter;
+            for (let row of this.result) {
+                if (row.diameter < dmin) {
+                    dmin = row.diameter;
+                }
+            }
+            console.log(`dmin ${dmin}`);
+            return dmin;
+        },
+        rotation_angle: function() {
+            let rotation_angle = 0;
+            let diameter_target = (this.s % 2) ? this.diameter_max : this.diameter_min;
+
+            for (let row of this.result) {
+                rotation_angle += row.angle;
+                if (row.diameter === diameter_target) {
+                    rotation_angle -= row.angle/2;
+                    break;
+                }
+            }
+
+            console.log(`rotation_angle ${rotation_angle}`);
+            rotation_angle = radians(rotation_angle)
+            console.log(`rotation_angle ${rotation_angle}`);
+            return rotation_angle
+        },
+        path: function() {
+            let angle = 0
+            let [x0, y0] = this.coord_map(0, this.result[this.result.length - 1].diameter);
+            path = `M ${x0} ${y0}\n`;
+            console.log(`path0 ${path}`);
+
+            for (i = 0; i < this.s; ++i) {
+                for (let row of this.result) {
+                    radius = Math.round(row.diameter * this.scale);
+                    let [x, y] = this.coord_map(
+                        row.diameter * Math.sin(radians(angle)),
+                        row.diameter * Math.cos(radians(angle)));
+                    path += `L ${x} ${y}\n`;
+                    angle += row.angle;
+                    [x, y] = this.coord_map(
+                        row.diameter * Math.sin(radians(angle)),
+                        row.diameter * Math.cos(radians(angle)));
+                    path += `A ${radius} ${radius} 0 0 1 ${x} ${y}\n`;
+                };
+            };
+            return path;
+        },
+    },
+    methods: {
+        del_input: function(diam_index) {
+            this.diam_inputs.splice(diam_index, 1);
+            this.diam_errors.splice(diam_index, 1);
+        },
+        coord_map: function(x, y) {
+            rx = this.width/2 + this.scale * (x * Math.cos(this.rotation_angle) - y * Math.sin(this.rotation_angle));
+            ry = this.height/2 - this.scale * (y * Math.cos(this.rotation_angle) + x * Math.sin(this.rotation_angle));
+            console.log([x, y, Math.round(rx), Math.round(ry), this.scale]);
+            return [Math.round(rx), Math.round(ry)];
+        },
+        order: function(order_type) {
+            /*
+             *d.sort()
+             *dnum = len(d)
+             *centre = d.index(d[-2] if dnum % 2 else d[-1])
+             *order = list(range(0, dnum, 2))
+             *redro = list(range(centre, 0, -2))
+             *order.extend(redro)
+             *d = [d[i] for i in order]
+            */
+            let d_list = [...this.diameters]
+            let result = [];
+            if (order_type == 'pyramid') {
+                d_list.sort((a, b) => (a - b));
+                let dnum = d_list.length;
+                let centre = (dnum % 2) ? dnum-2 : dnum-1;
+                let order = [];
+                for (let i = 0; i < dnum; i += 2) {
+                    order.push(i);
+                };
+                for (i = centre; i > 0; i += -2) {
+                    order.push(i);
+                };
+                for (i of order) {
+                    result.push(d_list[i]);
+                };
+            } else if (order_type == 'reversed') {
+                d_list.sort((a, b) => (a - b));
+                d_list.reverse();
+                result = d_list;
+            } else if (order_type == 'random') {
+                shuffleArray(d_list);
+                result = d_list;
+            } else {
+                d_list.sort((a, b) => (a - b));
+                result = d_list;
+            };
+            this.diameters = result;
+            console.log(result);
+        },
+        focusInput() {
+            console.log(this.$refs.diam_input);
+            this.$refs.diam_input[0].focus();
+        },
+    },
+    mounted() {
+        // this.nextTick(() => {
+        //     this.focusInput();
+        // });
+        setTimeout(this.focusInput, 1000);
+    },
+  });
+
+</script>
+</body>
+</html>
