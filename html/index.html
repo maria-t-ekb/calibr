@@ -11,6 +11,47 @@
     body {
      font-family: Times New Roman, sans-serif; /* Рубленый шрифт */
     }
+    .popup {
+     position: relative;
+     display: inline-block;
+     cursor: pointer;
+    }
+    .popup .b-popup {
+     visibility: hidden;
+    }
+    .popup .show {
+     visibility: visible;
+     -webkit-animation: fadeIn 1s;
+     animation: fadeIn 1s;
+    }
+    .popuptext{
+     height:65%;
+     background-color: rgba(0,0,0,0.5);
+     overflow:auto;
+     position:fixed;
+     top:10%;
+     width: auto;
+     background-color: #6A5ACD;
+     color: #fff;
+     text-align: justify;
+     border-radius: 10px;
+     padding: 20px;
+     position: fixed;
+     z-index: 1;
+     bottom: 125%;
+     margin-left: 10%;
+     margin-right: 10%;
+    }
+    .b-popup{
+     width:100%;
+     height: 100%;
+     background-color: rgba(0,0,0,0.5);
+     overflow:hidden;
+     position:fixed;
+     top:0px;
+     left:0%;
+     right:0%;
+    }
     .head {
      font-size: 125%; /* Размер шрифта в процентах */
      font-family: Times New Roman; /* Шрифт с засечками */
@@ -48,7 +89,16 @@
 <div class="container" id="app">
     <div class="row">
         <div class="col">
-            <h1>Ступенчатый калибр</h1>
+             <h1 align="center">Ступенчатый калибр
+      <sup><button class="popup" onclick="myFunction()" class="btn btn-info">?<span class="b-popup" id="myPopup" align="center"><div class="popuptext" align="center"><p>Калибр — средство контроля, контактирующее с элементом изделия по поверхности, линиям или точкам. Калибр имеет геометрические параметры, воспроизводящие элементы изделия с заданными предельными размерами. Размеры калибров могут задаваться без всякой связи с единицей измерения. Существуют трёхмерные калибры со сложной геометрической конфигурацией.</p>
+<p>На рисунке изображён калибр, состоящий из трёх одинаковых секторов, для наглядности, они поделены чёрными линиями и покрашены в разные цвета. В каждом секторе по семь дуг (одна из них подписана и обозначена чёрным цветом) различного диаметра, с разными градусными мерами. Чтобы  длины дуг были равные изменяется градусная мера этих дуг.</p>
+<h3>Возможен различный порядок расположения диаметров:</h3>
+<p>1. По уменьшению: диаметры располагаются от большего к меньшему.</p>
+<p>2. По возрастанию: диаметры располагаются от меньшего к большему.</p>
+<p>3. Пирамидкой: сначала половина диаметров располагаются от меньшего к большему, а затем вторая половина располагается от большего к меньшему.</p>
+<p>4. Случайным образом: диаметры располагаются в случайном порядке.</p></div></span>
+</button></sup></h1>
+
             <p>Калибр — средство контроля, контактирующее с элементом изделия по поверхности, линиям или точкам. Калибр имеет геометрические параметры, воспроизводящие элементы изделия с заданными предельными размерами. Размеры калибров могут задаваться без всякой связи с единицей измерения. Существуют трёхмерные калибры со сложной геометрической конфигурацией.</p>
         </div>
     </div>
@@ -116,6 +166,11 @@
      return degree * Math.PI / 180;
   }
 
+  function myFunction() {
+     var popup = document.getElementById("myPopup");
+     popup.classList.toggle("show");
+  }
+  
   function to_float(str) {
     str = str.trim();
     if (!str) {
