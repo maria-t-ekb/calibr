@@ -53,22 +53,35 @@
      right:0%;
     }
     .head {
-     font-size: 125%; /* Размер шрифта в процентах */
-     font-family: Times New Roman; /* Шрифт с засечками */
-     position: relative; /* Относительное позиционирование */
-     top: 5px; /* Сдвиг сверху */
+     font-size: 125%;
+     font-family: Times New Roman;
+     position: relative;
+     top: 5px;
+    }
+    .rightimg  {
+     float: right;
+     margin: 7px 0 7px 7px;
+    }
+    #question:hover {
+     cursor: pointer;
+    }
+    a {
+     text-decoration: none;
+    } 
+    a:hover {
+     text-decoration: underline;
     }
     .block1 {
-    background: #FA8072;
+     background: #FA8072;
     }
     .block2 {
-    background: #008000;
+     background: #008000;
     }
     .block3 {
-    background: #9400D3;
+     background: #9400D3;
     }
     .block4 {
-    background: #FA8072;
+     background: #FA8072;
     }
   </style>
     <!-- CSS only -->
@@ -89,17 +102,14 @@
 <div class="container" id="app">
     <div class="row">
         <div class="col">
-             <h1 align="center">Ступенчатый калибр
-      <sup><button class="popup" onclick="myFunction()" class="btn btn-info">?<span class="b-popup" id="myPopup" align="center"><div class="popuptext" align="center"><p>Калибр — средство контроля, контактирующее с элементом изделия по поверхности, линиям или точкам. Калибр имеет геометрические параметры, воспроизводящие элементы изделия с заданными предельными размерами. Размеры калибров могут задаваться без всякой связи с единицей измерения. Существуют трёхмерные калибры со сложной геометрической конфигурацией.</p>
-<p>На рисунке изображён калибр, состоящий из трёх одинаковых секторов, для наглядности, они поделены чёрными линиями и покрашены в разные цвета. В каждом секторе по семь дуг (одна из них подписана и обозначена чёрным цветом) различного диаметра, с разными градусными мерами. Чтобы  длины дуг были равные изменяется градусная мера этих дуг.</p>
+             <div class="popup"><span class="b-popup" id="myPopup" align="center" onclick="popup(event)"><div class="popuptext" align="center"><p>Калибр — средство контроля, контактирующее с элементом изделия по поверхности, линиям или точкам. Калибр имеет геометрические параметры, воспроизводящие элементы изделия с заданными предельными размерами. Размеры калибров могут задаваться без всякой связи с единицей измерения. Существуют трёхмерные калибры со сложной геометрической конфигурацией.</p>
+<p><img width="40%" hight="auto" src="data:image/png;base64, " alt="Red dot" class="rightimg"/>На рисунке изображён калибр, состоящий из трёх одинаковых секторов, для наглядности, они поделены чёрными линиями и покрашены в разные цвета. В каждом секторе по семь дуг (одна из них подписана и обозначена чёрным цветом) различного диаметра, с разными градусными мерами. Чтобы  длины дуг были равные изменяется градусная мера этих дуг.</p>
 <h3>Возможен различный порядок расположения диаметров:</h3>
 <p>1. По уменьшению: диаметры располагаются от большего к меньшему.</p>
 <p>2. По возрастанию: диаметры располагаются от меньшего к большему.</p>
 <p>3. Пирамидкой: сначала половина диаметров располагаются от меньшего к большему, а затем вторая половина располагается от большего к меньшему.</p>
-<p>4. Случайным образом: диаметры располагаются в случайном порядке.</p></div></span>
-</button></sup></h1>
-
-            <p>Калибр — средство контроля, контактирующее с элементом изделия по поверхности, линиям или точкам. Калибр имеет геометрические параметры, воспроизводящие элементы изделия с заданными предельными размерами. Размеры калибров могут задаваться без всякой связи с единицей измерения. Существуют трёхмерные калибры со сложной геометрической конфигурацией.</p>
+<p>4. Случайным образом: диаметры располагаются в случайном порядке.</p></div></span></div>
+            <h1 align="center">Ступенчатый калибр<sup id="question" onclick="popup(event)"><a href="page/new.html">?</a></sup></h1>
         </div>
     </div>
 
@@ -150,15 +160,11 @@
             </table>
         </div>
     </div>
-    <div class="row align-items-center">
-        <div class="col col-lg-3"></div>
-        <div class="col col-lg-6">
-            <svg width="100%" height="100%" v-bind:viewBox2="view_box" viewBox="0 0 1000 1000">
-                <circle v-bind:cx="Math.round(width/2)" v-bind:cy="Math.round(height/2)" v-bind:r="Math.round(size/2)" fill="#B0C4DE"></circle>
-                <path v-bind:d="path" stroke="red" fill="#Ffffff" stroke-width="1"/>
-            </svg>
-        </div>
-        <div class="col col-lg-3"></div>
+    <div align="center">
+        <svg width="60%" height="auto" v-bind:viewBox2="view_box" viewBox="0 0 1000 1000">
+            <circle v-bind:cx="Math.round(width/2)" v-bind:cy="Math.round(height/2)" v-bind:r="Math.round(size/2)" fill="#B0C4DE"></circle>
+            <path v-bind:d="path" stroke="red" fill="#Ffffff" stroke-width="1"/>
+        </svg>
     </div>
 </div>
 <script type="text/javascript">
@@ -166,10 +172,12 @@
      return degree * Math.PI / 180;
   }
 
-  function myFunction() {
-     var popup = document.getElementById("myPopup");
-     popup.classList.toggle("show");
-  }
+  function popup(event) {
+	event.preventDefault();
+    var popup = document.getElementById("myPopup");
+    popup.classList.toggle("show");
+}
+
   
   function to_float(str) {
     str = str.trim();
