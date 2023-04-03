@@ -5,11 +5,11 @@
     <title>Ступенчатый калибр</title>
     <style type="text/css">
    TABLE {
-    background: #B0E0E6; /* Цвет фона таблицы */
-    border: 5px double #0000FF; /* Рамка вокруг таблицы */
+    background: #B0E0E6;
+    border: 5px double #0000FF;
    }
     body {
-     font-family: Times New Roman, sans-serif; /* Рубленый шрифт */
+     font-family: Times New Roman, sans-serif;
     }
     .popup {
      position: relative;
@@ -114,13 +114,13 @@
     <div class="row">
         <div class="col col-lg-6">
             <form>
-                <label for="s_input" class="form-label head">Количество сегментов:</label>
+                <label for="s_input" class="form-label head">Введите количество сегментов:</label>
                 <input id="s_input" type="text" class="form-control" v-bind:class="{'is-invalid': s_error}" aria-describedby="s_error" v-model="s_input" required>
                 <div id="s_error" class="invalid-feedback">{{ s_error }}</div>
             </form>
 
             <form class="row g-3">
-                <span class="head">Введите диаметр:</span><Br>
+                <span class="head">Введите диаметры калибра:</span><Br>
                 <div class="container">
                     <div v-for="(diam_input, diam_index) in diam_inputs" class="row">
                         <div class="col-md-5">
